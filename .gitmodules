@@ -1,3 +1,0 @@
-[submodule "hw/kicadlib"]
-	path = hw/kicadlib
-	url = https://github.com/noahp/kicadlib.git
