@@ -1,9 +1,9 @@
-Cmp-Mod V01 Created by Cvpcb (2014-10-18 BZR 5203)-product   date = 6/1/2015 12:40:52 PM
+Cmp-Mod V01 Created by Cvpcb (2014-10-27 BZR 5228)-product   date = 6/2/2015 9:34:41 PM
 
 BeginCmp
-TimeStamp = /556C69DB;
+TimeStamp = /556C686B;
 Reference = P1;
-ValeurCmp = DIN;
+ValeurCmp = +5V;
 IdModule  = kicadlib:TEST_0.100;
 EndCmp
 
@@ -15,9 +15,9 @@ IdModule  = kicadlib:TEST_0.100;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C686B;
+TimeStamp = /556C69DB;
 Reference = P3;
-ValeurCmp = +5V;
+ValeurCmp = DIN;
 IdModule  = kicadlib:TEST_0.100;
 EndCmp
 
@@ -43,588 +43,588 @@ IdModule  = kicadlib:TEST_0.100;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556C8299;
+TimeStamp = /556CC907;
 Reference = U1;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556C86F6;
+TimeStamp = /556CC90E;
 Reference = U2;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB39E;
+TimeStamp = /556CC915;
 Reference = U3;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB3E2;
+TimeStamp = /556CC91C;
 Reference = U4;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB689;
+TimeStamp = /556CC923;
 Reference = U5;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB6CD;
+TimeStamp = /556CC9FC;
 Reference = U6;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB708;
+TimeStamp = /556CD6D5;
 Reference = U7;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556C82A0;
+TimeStamp = /556CD6DC;
 Reference = U8;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556C86AE;
+TimeStamp = /556CD6E3;
 Reference = U9;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB3A4;
+TimeStamp = /556CD6EA;
 Reference = U10;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB3DC;
+TimeStamp = /556CD6F1;
 Reference = U11;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB68F;
+TimeStamp = /556CD7CA;
 Reference = U12;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB6C7;
+TimeStamp = /556CC946;
 Reference = U13;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB70E;
+TimeStamp = /556CC93F;
 Reference = U14;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556C82A7;
+TimeStamp = /556CC938;
 Reference = U15;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556C8686;
+TimeStamp = /556CC931;
 Reference = U16;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB3AA;
+TimeStamp = /556CC92A;
 Reference = U17;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB3D6;
+TimeStamp = /556CCB4C;
 Reference = U18;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB695;
+TimeStamp = /556CD714;
 Reference = U19;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB6C1;
+TimeStamp = /556CD70D;
 Reference = U20;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB714;
+TimeStamp = /556CD706;
 Reference = U21;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556C82AE;
+TimeStamp = /556CD6FF;
 Reference = U22;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556C8544;
+TimeStamp = /556CD6F8;
 Reference = U23;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB3B0;
+TimeStamp = /556CD7D1;
 Reference = U24;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB3D0;
+TimeStamp = /556CC94D;
 Reference = U25;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB69B;
+TimeStamp = /556CC954;
 Reference = U26;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB6BB;
+TimeStamp = /556CC95B;
 Reference = U27;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB71A;
+TimeStamp = /556CC962;
 Reference = U28;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556C8331;
+TimeStamp = /556CC969;
 Reference = U29;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556C8462;
+TimeStamp = /556CCA03;
 Reference = U30;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB3C1;
+TimeStamp = /556CD71B;
 Reference = U31;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB3C9;
+TimeStamp = /556CD722;
 Reference = U32;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB6AC;
+TimeStamp = /556CD729;
 Reference = U33;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB6B4;
+TimeStamp = /556CD730;
 Reference = U34;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CB72B;
+TimeStamp = /556CD737;
 Reference = U35;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CCE10;
+TimeStamp = /556CD7D8;
 Reference = U36;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CCE16;
+TimeStamp = /556CC98C;
 Reference = U37;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CCE1F;
+TimeStamp = /556CC985;
 Reference = U38;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CCE25;
+TimeStamp = /556CC97E;
 Reference = U39;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CCE2F;
+TimeStamp = /556CC977;
 Reference = U40;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CCE35;
+TimeStamp = /556CC970;
 Reference = U41;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8146/556CCE3F;
+TimeStamp = /556CCA0A;
 Reference = U42;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB1E1;
+TimeStamp = /556CD75A;
 Reference = U43;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB220;
+TimeStamp = /556CD753;
 Reference = U44;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB227;
+TimeStamp = /556CD74C;
 Reference = U45;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB266;
+TimeStamp = /556CD745;
 Reference = U46;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB26D;
+TimeStamp = /556CD73E;
 Reference = U47;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB2AC;
+TimeStamp = /556CD7DF;
 Reference = U48;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB2B3;
+TimeStamp = /556CC993;
 Reference = U49;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB1E8;
+TimeStamp = /556CC99A;
 Reference = U50;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB219;
+TimeStamp = /556CC9A1;
 Reference = U51;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB22E;
+TimeStamp = /556CC9A8;
 Reference = U52;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB25F;
+TimeStamp = /556CC9AF;
 Reference = U53;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB274;
+TimeStamp = /556CCA11;
 Reference = U54;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB2A5;
+TimeStamp = /556CD761;
 Reference = U55;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB2BA;
+TimeStamp = /556CD768;
 Reference = U56;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB1EF;
+TimeStamp = /556CD76F;
 Reference = U57;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB212;
+TimeStamp = /556CD776;
 Reference = U58;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB235;
+TimeStamp = /556CD77D;
 Reference = U59;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB258;
+TimeStamp = /556CD7E6;
 Reference = U60;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB27B;
+TimeStamp = /556CC9D2;
 Reference = U61;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB29E;
+TimeStamp = /556CC9CB;
 Reference = U62;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB2C1;
+TimeStamp = /556CC9C4;
 Reference = U63;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB1F6;
+TimeStamp = /556CC9BD;
 Reference = U64;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB20B;
+TimeStamp = /556CC9B6;
 Reference = U65;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB23C;
+TimeStamp = /556CCA18;
 Reference = U66;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB251;
+TimeStamp = /556CD7A0;
 Reference = U67;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB282;
+TimeStamp = /556CD799;
 Reference = U68;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB297;
+TimeStamp = /556CD792;
 Reference = U69;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB2C8;
+TimeStamp = /556CD78B;
 Reference = U70;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB1FD;
+TimeStamp = /556CD784;
 Reference = U71;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB204;
+TimeStamp = /556CD7ED;
 Reference = U72;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB243;
+TimeStamp = /556CC9D9;
 Reference = U73;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB24A;
+TimeStamp = /556CC9E0;
 Reference = U74;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB289;
+TimeStamp = /556CC9E7;
 Reference = U75;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB290;
+TimeStamp = /556CC9EE;
 Reference = U76;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB2CF;
+TimeStamp = /556CC9F5;
 Reference = U77;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB2D6;
+TimeStamp = /556CCA1F;
 Reference = U78;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB2DD;
+TimeStamp = /556CD7A7;
 Reference = U79;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB2E4;
+TimeStamp = /556CD7AE;
 Reference = U80;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB2EB;
+TimeStamp = /556CD7B5;
 Reference = U81;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB2F2;
+TimeStamp = /556CD7BC;
 Reference = U82;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB2F9;
+TimeStamp = /556CD7C3;
 Reference = U83;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
 EndCmp
 
 BeginCmp
-TimeStamp = /556C8A1A/556CB300;
+TimeStamp = /556CD7F4;
 Reference = U84;
 ValeurCmp = WS2812B;
 IdModule  = kicadlib:WS2812B_SMD_5050;
