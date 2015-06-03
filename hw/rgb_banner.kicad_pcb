@@ -3,7 +3,7 @@
   (general
     (links 248)
     (no_connects 248)
-    (area 67.949999 51.949999 164.050001 108.050001)
+    (area 66.646714 51.841 197.915619 108.050001)
     (thickness 1.6)
     (drawings 4)
     (tracks 8)
@@ -65,7 +65,7 @@
     (aux_axis_origin 0 0)
     (visible_elements 7FFFF77F)
     (pcbplotparams
-      (layerselection 0x00030_80000001)
+      (layerselection 0x01030_80000001)
       (usegerberextensions false)
       (excludeedgelayer true)
       (linewidth 0.100000)
@@ -86,9 +86,9 @@
       (subtractmaskfromsilk false)
       (outputformat 1)
       (mirror false)
-      (drillshape 1)
+      (drillshape 0)
       (scaleselection 1)
-      (outputdirectory ""))
+      (outputdirectory gerbers))
   )
 
   (net 0 "")
@@ -301,7 +301,7 @@
   )
 
   (module kicadlib:TEST_0.100 (layer F.Cu) (tedit 514BA442) (tstamp 556C8D85)
-    (at 276.152809 105.679)
+    (at 184.152809 84.679)
     (path /556C686B)
     (fp_text reference P1 (at 0 -2.1) (layer F.SilkS) hide
       (effects (font (size 1 1) (thickness 0.15)))
@@ -314,7 +314,7 @@
   )
 
   (module kicadlib:TEST_0.100 (layer F.Cu) (tedit 514BA442) (tstamp 556C8D8A)
-    (at 276.152809 99.279)
+    (at 184.152809 78.279)
     (path /556C69BB)
     (fp_text reference P2 (at 0 -2.1) (layer F.SilkS) hide
       (effects (font (size 1 1) (thickness 0.15)))
@@ -327,7 +327,7 @@
   )
 
   (module kicadlib:TEST_0.100 (layer F.Cu) (tedit 514BA442) (tstamp 556C8D8F)
-    (at 279.590904 105.679)
+    (at 187.590904 84.679)
     (path /556C69DB)
     (fp_text reference P3 (at 0 -2.1) (layer F.SilkS) hide
       (effects (font (size 1 1) (thickness 0.15)))
@@ -340,7 +340,7 @@
   )
 
   (module kicadlib:TEST_0.100 (layer F.Cu) (tedit 514BA442) (tstamp 556C8D94)
-    (at 288.062809 99.279)
+    (at 196.062809 78.279)
     (path /556C71D9)
     (fp_text reference P4 (at 0 -2.1) (layer F.SilkS) hide
       (effects (font (size 1 1) (thickness 0.15)))
@@ -353,7 +353,7 @@
   )
 
   (module kicadlib:TEST_0.100 (layer F.Cu) (tedit 514BA442) (tstamp 556C8D99)
-    (at 284.362809 99.279)
+    (at 192.362809 78.279)
     (path /556C71DF)
     (fp_text reference P5 (at 0 -2.1) (layer F.SilkS) hide
       (effects (font (size 1 1) (thickness 0.15)))
@@ -366,7 +366,7 @@
   )
 
   (module kicadlib:TEST_0.100 (layer F.Cu) (tedit 514BA442) (tstamp 556C8D9E)
-    (at 280.257571 99.279)
+    (at 188.257571 78.279)
     (path /556C69FA)
     (fp_text reference P6 (at 0 -2.1) (layer F.SilkS) hide
       (effects (font (size 1 1) (thickness 0.15)))
@@ -3071,14 +3071,14 @@
   (gr_line (start 68 108) (end 164 108) (angle 90) (layer Edge.Cuts) (width 0.1))
   (gr_line (start 68 52) (end 68 108) (angle 90) (layer Edge.Cuts) (width 0.1))
 
-  (segment (start 69.55 60.95) (end 70 60.5) (width 0.45) (layer F.Cu) (net 39) (tstamp 556C9B37))
-  (segment (start 69.55 62.4) (end 69.55 60.95) (width 0.45) (layer F.Cu) (net 39))
-  (segment (start 74.45 59.45) (end 74.5 59.5) (width 0.45) (layer F.Cu) (net 39) (tstamp 556C9B3A))
-  (segment (start 74.45 57.6) (end 74.45 59.45) (width 0.45) (layer F.Cu) (net 39))
-  (segment (start 82.45 59.45) (end 82.5 59.5) (width 0.45) (layer F.Cu) (net 39) (tstamp 556C9B3D))
-  (segment (start 82.45 57.6) (end 82.45 59.45) (width 0.45) (layer F.Cu) (net 39))
-  (segment (start 77.55 60.95) (end 78 60.5) (width 0.45) (layer F.Cu) (net 39) (tstamp 556C9B40))
   (segment (start 77.55 62.4) (end 77.55 60.95) (width 0.45) (layer F.Cu) (net 39))
+  (segment (start 77.55 60.95) (end 78 60.5) (width 0.45) (layer F.Cu) (net 39) (tstamp 556C9B40))
+  (segment (start 82.45 57.6) (end 82.45 59.45) (width 0.45) (layer F.Cu) (net 39))
+  (segment (start 82.45 59.45) (end 82.5 59.5) (width 0.45) (layer F.Cu) (net 39) (tstamp 556C9B3D))
+  (segment (start 74.45 57.6) (end 74.45 59.45) (width 0.45) (layer F.Cu) (net 39))
+  (segment (start 74.45 59.45) (end 74.5 59.5) (width 0.45) (layer F.Cu) (net 39) (tstamp 556C9B3A))
+  (segment (start 69.55 62.4) (end 69.55 60.95) (width 0.45) (layer F.Cu) (net 39))
+  (segment (start 69.55 60.95) (end 70 60.5) (width 0.45) (layer F.Cu) (net 39) (tstamp 556C9B37))
 
   (zone (net 4) (net_name /digit1/+5V) (layer F.Cu) (tstamp 556C9B27) (hatch edge 0.508)
     (connect_pads (clearance 0.254))
@@ -3090,23 +3090,13 @@
       )
     )
   )
-  (zone (net 39) (net_name /+5V) (layer F.Cu) (tstamp 556E6354) (hatch edge 0.508)
+  (zone (net 40) (net_name /gnd) (layer F.Cu) (tstamp 556E635A) (hatch edge 0.508)
     (connect_pads (clearance 0.508))
     (min_thickness 0.254)
     (fill yes (arc_segments 16) (thermal_gap 0.508) (thermal_bridge_width 0.508))
     (polygon
       (pts
-        (xy 163.5 77) (xy 68.5 77) (xy 68.5 75) (xy 163.5 75)
-      )
-    )
-  )
-  (zone (net 39) (net_name /+5V) (layer F.Cu) (tstamp 556E6355) (hatch edge 0.508)
-    (connect_pads (clearance 0.508))
-    (min_thickness 0.254)
-    (fill yes (arc_segments 16) (thermal_gap 0.508) (thermal_bridge_width 0.508))
-    (polygon
-      (pts
-        (xy 163.5 93) (xy 68.5 93) (xy 68.5 91) (xy 163.5 91)
+        (xy 163.5 53.5) (xy 68.5 53.5) (xy 68.5 52.5) (xy 163.5 52.5)
       )
     )
   )
@@ -3120,6 +3110,16 @@
       )
     )
   )
+  (zone (net 39) (net_name /+5V) (layer F.Cu) (tstamp 556E6354) (hatch edge 0.508)
+    (connect_pads (clearance 0.508))
+    (min_thickness 0.254)
+    (fill yes (arc_segments 16) (thermal_gap 0.508) (thermal_bridge_width 0.508))
+    (polygon
+      (pts
+        (xy 163.5 77) (xy 68.5 77) (xy 68.5 75) (xy 163.5 75)
+      )
+    )
+  )
   (zone (net 40) (net_name /gnd) (layer F.Cu) (tstamp 556E635D) (hatch edge 0.508)
     (connect_pads (clearance 0.508))
     (min_thickness 0.254)
@@ -3127,6 +3127,16 @@
     (polygon
       (pts
         (xy 163.5 85) (xy 68.5 85) (xy 68.5 83) (xy 163.5 83)
+      )
+    )
+  )
+  (zone (net 39) (net_name /+5V) (layer F.Cu) (tstamp 556E6355) (hatch edge 0.508)
+    (connect_pads (clearance 0.508))
+    (min_thickness 0.254)
+    (fill yes (arc_segments 16) (thermal_gap 0.508) (thermal_bridge_width 0.508))
+    (polygon
+      (pts
+        (xy 163.5 93) (xy 68.5 93) (xy 68.5 91) (xy 163.5 91)
       )
     )
   )
@@ -3140,13 +3150,13 @@
       )
     )
   )
-  (zone (net 40) (net_name /gnd) (layer F.Cu) (tstamp 556E635A) (hatch edge 0.508)
+  (zone (net 40) (net_name /gnd) (layer F.Cu) (tstamp 556E5F84) (hatch edge 0.508)
     (connect_pads (clearance 0.508))
     (min_thickness 0.254)
     (fill yes (arc_segments 16) (thermal_gap 0.508) (thermal_bridge_width 0.508))
     (polygon
       (pts
-        (xy 163.5 53.5) (xy 68.5 53.5) (xy 68.5 52.5) (xy 163.5 52.5)
+        (xy 163.5 101) (xy 68.5 101) (xy 68.5 99) (xy 163.5 99)
       )
     )
   )
