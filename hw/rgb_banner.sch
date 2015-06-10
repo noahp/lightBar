@@ -10,7 +10,6 @@ LIBS:cmos4000
 LIBS:adc-dac
 LIBS:memory
 LIBS:xilinx
-LIBS:special
 LIBS:microcontrollers
 LIBS:dsp
 LIBS:microchip
@@ -624,15 +623,13 @@ Wire Wire Line
 	7800 5550 7700 5550
 Connection ~ 7800 5800
 Wire Wire Line
-	7800 6000 7800 5800
+	7800 5800 7800 6000
 Wire Wire Line
 	7700 6150 7800 6150
 Wire Wire Line
 	7700 6000 7700 6150
 Wire Wire Line
 	7600 6000 7700 6000
-Wire Wire Line
-	3150 5800 15300 5800
 Wire Wire Line
 	8700 6350 8700 6150
 Wire Wire Line
@@ -683,7 +680,7 @@ Connection ~ 2300 5800
 Wire Wire Line
 	3400 5800 3400 6000
 Wire Wire Line
-	2050 5800 7600 5800
+	2050 5800 15300 5800
 Wire Wire Line
 	2300 6000 2300 5800
 Connection ~ 6500 6350
@@ -1647,8 +1644,6 @@ Wire Wire Line
 Wire Wire Line
 	8900 5800 8900 6000
 Connection ~ 13100 6350
-Wire Wire Line
-	14200 6350 14200 6150
 Connection ~ 12000 6350
 Wire Wire Line
 	13100 6350 13100 6150
@@ -1752,8 +1747,6 @@ Wire Wire Line
 Wire Wire Line
 	8900 4600 8900 4800
 Connection ~ 13100 5150
-Wire Wire Line
-	14200 5150 14200 4950
 Connection ~ 12000 5150
 Wire Wire Line
 	13100 5150 13100 4950
@@ -1802,8 +1795,6 @@ Connection ~ 13300 3950
 Wire Wire Line
 	13300 3950 13300 4200
 Connection ~ 13100 4600
-Wire Wire Line
-	14200 4600 14200 4350
 Connection ~ 12000 4600
 Wire Wire Line
 	13100 4600 13100 4350
@@ -1857,8 +1848,6 @@ Wire Wire Line
 Wire Wire Line
 	8900 3400 8900 3600
 Connection ~ 13100 3950
-Wire Wire Line
-	14200 3950 14200 3750
 Connection ~ 12000 3950
 Wire Wire Line
 	13100 3950 13100 3750
@@ -1907,8 +1896,6 @@ Connection ~ 13300 2750
 Wire Wire Line
 	13300 2750 13300 3000
 Connection ~ 13100 3400
-Wire Wire Line
-	14200 3400 14200 3150
 Connection ~ 12000 3400
 Wire Wire Line
 	13100 3400 13100 3150
@@ -1962,8 +1949,6 @@ Wire Wire Line
 Wire Wire Line
 	8900 2200 8900 2400
 Connection ~ 13100 2750
-Wire Wire Line
-	14200 2750 14200 2550
 Connection ~ 12000 2750
 Wire Wire Line
 	13100 2750 13100 2550
@@ -2105,4 +2090,24 @@ Text Label 2050 4600 2    60   ~ 0
 gnd
 Text Label 2050 5800 2    60   ~ 0
 gnd
+Connection ~ 7600 5800
+Connection ~ 14200 5800
+Wire Wire Line
+	14200 5150 14200 4950
+Connection ~ 14200 5150
+Wire Wire Line
+	14200 6150 14200 6350
+Connection ~ 14200 6350
+Wire Wire Line
+	14200 4350 14200 4600
+Connection ~ 14200 4600
+Wire Wire Line
+	14200 3950 14200 3750
+Connection ~ 14200 3950
+Wire Wire Line
+	14200 3400 14200 3150
+Connection ~ 14200 3400
+Wire Wire Line
+	14200 2750 14200 2550
+Connection ~ 14200 2750
 $EndSCHEMATC
