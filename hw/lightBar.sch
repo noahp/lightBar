@@ -28,8 +28,7 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
-LIBS:kicadlib
-LIBS:rgb_banner-cache
+LIBS:lightBar-cache
 EELAYER 25 0
 EELAYER END
 $Descr User 22000 17000

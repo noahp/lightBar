@@ -3052,7 +3052,7 @@
       (net 37 "Net-(U83-Pad2)"))
   )
 
-  (gr_text "RGB Banner 2 Digit Module\nhttps://github.com/noahp/rgb_banner\nPCB Rev 0.1" (at 112 61.5) (layer B.SilkS)
+  (gr_text "RGB Banner 2 Digit Module\nhttps://github.com/noahp/lightBar\nPCB Rev 0.1" (at 112 61.5) (layer B.SilkS)
     (effects (font (size 2 2) (thickness 0.35)) (justify mirror))
   )
   (gr_line (start 164 52) (end 68 52) (angle 90) (layer Edge.Cuts) (width 0.1))

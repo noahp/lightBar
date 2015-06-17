@@ -1,6 +1,6 @@
 (export (version D)
   (design
-    (source C:/dev/rgb_banner/hw/rgb_banner.sch)
+    (source C:/dev/lightBar/hw/lightBar.sch)
     (date "6/9/2015 9:47:15 PM")
     (tool "Eeschema (after 2015-may-25 BZR unknown)-product")
     (sheet (number 1) (name /) (tstamps /)
@@ -9,7 +9,7 @@
         (company)
         (rev)
         (date)
-        (source rgb_banner.sch)
+        (source lightBar.sch)
         (comment (number 1) (value ""))
         (comment (number 2) (value ""))
         (comment (number 3) (value ""))
@@ -575,7 +575,7 @@
     (library (logical device)
       (uri "C:\\Program Files\\KiCad\\share\\kicad\\library\\device.lib"))
     (library (logical kicadlib)
-      (uri C:\dev\rgb_banner\hw\kicadlib\kicadlib.lib)))
+      (uri C:\dev\lightBar\hw\kicadlib\kicadlib.lib)))
   (nets
     (net (code 1) (name /d_out)
       (node (ref U84) (pin 2))
