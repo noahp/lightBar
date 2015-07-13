@@ -138,8 +138,11 @@ static void encodeWS2812B(uint8_t *pIn, uint8_t *pOut, uint32_t len)
     }
 }
 
-#define RESET_BRIGHTNESS 255
-static uint8_t rawData[169];
+#define RESET_BRIGHTNESS 15
+// dead area, used as reset pulse in 1-wire ws2812 interface
+#define SPI_BLACKOUT_WINDOW_SIZE 160
+#define SPI_WS2812_LIGHT_COUNT 84
+static uint8_t rawData[SPI_BLACKOUT_WINDOW_SIZE + 3*3*SPI_WS2812_LIGHT_COUNT];
 static rgbData_t rgbData = {.color = {.g=RESET_BRIGHTNESS, .r=0x00, .b=0x00}};
 static uint32_t dataOff = 0xFF;
 static void main_increment_lights(void)
@@ -178,10 +181,17 @@ static void main_increment_lights(void)
 
 void main_send_lights(void)
 {
+    int i;
+
     // main_increment_lights();
 
     // encode the sequence
-    encodeWS2812B(rgbData.byte, &rawData[160], 3);
+    encodeWS2812B(rgbData.byte, &rawData[SPI_BLACKOUT_WINDOW_SIZE], 3);
+
+    // copy the sequence over all leds
+    for(i=SPI_BLACKOUT_WINDOW_SIZE+9; i<sizeof(rawData); i+=9){
+        memcpy(&rawData[i], &rawData[SPI_BLACKOUT_WINDOW_SIZE], 9);
+    }
 
     // send the data
     main_spi_send(rawData, sizeof(rawData));

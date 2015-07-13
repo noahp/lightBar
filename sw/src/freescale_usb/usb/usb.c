@@ -696,7 +696,6 @@ void USB_ISR(void)
     if(FLAG_CHK(USB_ISTAT_ERROR_SHIFT,USB0_ISTAT))
     //if(INT_STAT_ERROR && INT_ENB_ERROR_EN )
     {
-        FLAG_CHK(USB_ISTAT_ERROR_SHIFT,USB0_ISTAT);
         PRINTF("\nUSB Error\n");
         //INT_STAT_ERROR=1;
 
