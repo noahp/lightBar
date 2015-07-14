@@ -144,53 +144,93 @@ static void encodeWS2812B(uint8_t *pIn, uint8_t *pOut, uint32_t len)
 #define SPI_WS2812_LIGHT_COUNT 84
 static uint8_t rawData[SPI_BLACKOUT_WINDOW_SIZE + 3*3*SPI_WS2812_LIGHT_COUNT];
 static rgbData_t rgbData = {.color = {.g=RESET_BRIGHTNESS, .r=0x00, .b=0x00}};
-static uint32_t dataOff = 0xFF;
-static void main_increment_lights(void)
+static bool incrementActive = false;
+static bool scanActive = false;
+static int scanPos = 0;
+static const uint8_t zeroLed[] = {0x92, 0x49, 0x24, 0x92, 0x49, 0x24, 0x92, 0x49, 0x24};
+static uint8_t brightness = RESET_BRIGHTNESS;
+static uint32_t dataOff = RESET_BRIGHTNESS;
+
+static void main_increment_lights(uint8_t maxBrightness)
 {
     // set the rgb values
-    if(dataOff < 0xFF){
+    if(dataOff < maxBrightness){
         rgbData.color.b--;
         rgbData.color.g++;
     }
-    else if (dataOff < 0xFF * 2){
+    else if (dataOff < maxBrightness * 2){
         // steady for 1 period
         asm("nop");
     }
-    else if(dataOff < 0xFF * 3){
+    else if(dataOff < maxBrightness * 3){
         rgbData.color.g--;
         rgbData.color.r++;
-        if(rgbData.color.r > 0xFF /2){
-            asm("nop");
-        }
     }
-    else if (dataOff < 0xFF * 4){
+    else if (dataOff < maxBrightness * 4){
         // steady for 1 period
         asm("nop");
     }
-    else if(dataOff < 0xFF * 5){
+    else if(dataOff < maxBrightness * 5){
         rgbData.color.r--;
         rgbData.color.b++;
     }
-    else if (dataOff < 0xFF * 6){
+    else if (dataOff < maxBrightness * 6){
         // steady for 1 period
         asm("nop");
     }
 
-    dataOff = (dataOff + 1) % (0xFF * 6);
+    dataOff = (dataOff + 1) % (maxBrightness * 6);
 }
 
-void main_send_lights(void)
+static void main_toggle_increment(void)
+{
+    incrementActive = !incrementActive;
+    if(incrementActive){
+        dataOff = brightness;
+        rgbData.all = 0;
+        rgbData.color.r = 0;
+        rgbData.color.g = brightness;
+        rgbData.color.b = 0;
+    }
+}
+
+static void main_toggle_scan(void)
 {
     int i;
 
-    // main_increment_lights();
+    scanActive = !scanActive;
+    scanPos = 0;
+    if(scanActive){
+        for(i=SPI_BLACKOUT_WINDOW_SIZE; i<sizeof(rawData); i+=9){
+            memcpy(&rawData[i], zeroLed, 9);
+        }
+    }
+}
 
-    // encode the sequence
-    encodeWS2812B(rgbData.byte, &rawData[SPI_BLACKOUT_WINDOW_SIZE], 3);
+static void main_send_lights(void)
+{
+    int i;
 
-    // copy the sequence over all leds
-    for(i=SPI_BLACKOUT_WINDOW_SIZE+9; i<sizeof(rawData); i+=9){
-        memcpy(&rawData[i], &rawData[SPI_BLACKOUT_WINDOW_SIZE], 9);
+    if(incrementActive){
+        main_increment_lights(brightness);
+    }
+
+    // encode the sequence, load it at the current scan position (stays at zero
+    // if scan inactive)
+    encodeWS2812B(rgbData.byte, &rawData[SPI_BLACKOUT_WINDOW_SIZE + (scanPos * 9)], 3);
+
+    // load the frame buffer
+    if(scanActive){
+        // zero the last position, and increment the scan index
+        memcpy(&rawData[SPI_BLACKOUT_WINDOW_SIZE + ((scanPos - 1) % SPI_WS2812_LIGHT_COUNT) * 9],
+               zeroLed, 9);
+        scanPos = (scanPos + 1) % SPI_WS2812_LIGHT_COUNT;
+    }
+    else{
+        // copy the sequence over all leds
+        for(i=SPI_BLACKOUT_WINDOW_SIZE+9; i<sizeof(rawData); i+=9){
+            memcpy(&rawData[i], &rawData[SPI_BLACKOUT_WINDOW_SIZE], 9);
+        }
     }
 
     // send the data
@@ -223,7 +263,6 @@ static void main_rgb(void)
 int main(void)
 {
     uint8_t cdcChar;
-    uint8_t brightness = RESET_BRIGHTNESS;
     uint8_t charBuf[5];
     uint8_t pos;
     bool settingBrightness = false;
@@ -290,6 +329,22 @@ int main(void)
                     case 'k':
                         settingBrightness = true;
                         pos = 0;
+                        break;
+
+                    case 's':
+                        main_toggle_scan();
+                        break;
+
+                    case 'i':
+                        main_toggle_increment();
+                        break;
+
+                    case 'a':
+                        // all on
+                        rgbData.all = 0;
+                        rgbData.color.r = brightness;
+                        rgbData.color.g = brightness;
+                        rgbData.color.b = brightness;
                         break;
 
                     default:
