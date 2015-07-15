@@ -215,6 +215,12 @@ static void main_send_lights(void)
         main_increment_lights(brightness);
     }
 
+    if(scanActive){
+        for(i=SPI_BLACKOUT_WINDOW_SIZE; i<sizeof(rawData); i+=9){
+            memcpy(&rawData[i], zeroLed, 9);
+        }
+    }
+
     // encode the sequence, load it at the current scan position (stays at zero
     // if scan inactive)
     encodeWS2812B(rgbData.byte, &rawData[SPI_BLACKOUT_WINDOW_SIZE + (scanPos * 9)], 3);
