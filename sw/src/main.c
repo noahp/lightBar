@@ -148,7 +148,7 @@ static void encodeWS2812B(uint8_t *pIn, uint8_t *pOut, uint32_t len)
     }
 }
 
-#define RESET_BRIGHTNESS 1
+#define RESET_BRIGHTNESS 7
 // dead area, used as reset pulse in 1-wire ws2812 interface
 #define SPI_WS2812_LIGHT_COUNT 84
 static uint8_t spiData[260 + 3*3*SPI_WS2812_LIGHT_COUNT];
@@ -286,7 +286,7 @@ static bool isPrintable(uint8_t chr)
 
 static void setPixel(int idx, uint8_t *pBuf, rgbData_t *pColor)
 {
-    encodeWS2812B(pColor->byte, pBuf + idx, 3);
+    encodeWS2812B(pColor->byte, pBuf + idx * 9, 3);
 }
 
 static void clearPixel(int idx, uint8_t *pBuf)
@@ -306,8 +306,9 @@ static void setChar(int charPos,
                     rgbData_t *pColor)
 {
     const char *font = &font5x7[(charVal - 0x20) * 5];
-    int position;
-    int i,j;
+    uint8_t charSlice;
+    uint32_t position;
+    uint32_t i,j;
 
     // clear the affected region
     for(i=0; i<7; i++){
@@ -321,9 +322,24 @@ static void setChar(int charPos,
             position += charPos * 6;
         }
         for(j=0; j<6; j++){
-            clearPixel(position + j, pBuf);
+            charSlice = 0;
+            if(i & 1){
+                if(j > 0){
+                    charSlice = font[5-j] & (1 << i);
+                }
+            }
+            else{
+                if(j < 5){
+                    charSlice = font[j] & (1 << i);
+                }
+            }
+            if(charSlice){
+                setPixel(position + j, pBuf, pColor);
+            }
+            else{
+                clearPixel(position + j, pBuf);
+            }
         }
-        main_spi_send(spiData, sizeof(spiData));
     }
 }
 
@@ -333,7 +349,7 @@ int main(void)
     uint8_t charBuf[5];
     uint8_t settingCount;
     bool settingActive = false;
-    uint8_t activeChar = 1;
+    uint8_t activeChar = 0;
     int i;
 
     // initialize the necessary
@@ -349,6 +365,11 @@ int main(void)
     // copy the sequence over all leds
     for(i=9; i<SPI_WS2812_LIGHT_COUNT*9; i+=9){
         memcpy(&rawData[i], rawData, 9);
+    }
+
+    // actually, zero them all
+    for(i=0; i<SPI_WS2812_LIGHT_COUNT*9; i+=9){
+        memcpy(&rawData[i], zeroLed, 9);
     }
 
     // usb init
