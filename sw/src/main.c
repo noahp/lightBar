@@ -146,7 +146,7 @@ static uint8_t rawData[SPI_BLACKOUT_WINDOW_SIZE + 3*3*SPI_WS2812_LIGHT_COUNT];
 static rgbData_t rgbData = {.color = {.g=RESET_BRIGHTNESS, .r=0x00, .b=0x00}};
 static bool incrementActive = false;
 static bool scanActive = false;
-static int scanPos = 0;
+static uint32_t scanPos = 0;
 static const uint8_t zeroLed[] = {0x92, 0x49, 0x24, 0x92, 0x49, 0x24, 0x92, 0x49, 0x24};
 static uint8_t brightness = RESET_BRIGHTNESS;
 static uint32_t dataOff = RESET_BRIGHTNESS;
