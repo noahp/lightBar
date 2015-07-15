@@ -25,14 +25,21 @@ static void main_init_io(void)
     // set B0 DDR to output
     GPIOB_PDDR |= (1 << 0);
 }
+
+//static void delay_ms(uint32_t ms)
+//{
+//    uint32_t start = systick_getMs();
+//    while(systick_getMs() - start < ms);
+//}
+
 static void main_spi_send(uint8_t *pData, uint32_t len)
 {
     // wait until dma busy flag is cleared
     while(DMA_BASE_PTR->DMA[0].DSR_BCR & DMA_DSR_BCR_BSY_MASK);
-    //// pull spi mosi low (p27) for at least 50us
-    //PORTC_PCR6 = PORT_PCR_MUX(1);
-    //GPIOC_PCOR = (1 << 6);
-    //delay_ms(1);
+//    // pull spi mosi low (p27) for at least 50us
+//    PORTC_PCR6 = PORT_PCR_MUX(1);
+//    GPIOC_PCOR = (1 << 6);
+//    delay_ms(2);
     // reset dma
     DMA_BASE_PTR->DMA[0].DSR_BCR = DMA_DSR_BCR_DONE_MASK;
     // write to the dma
@@ -42,6 +49,8 @@ static void main_spi_send(uint8_t *pData, uint32_t len)
     DMA_BASE_PTR->DMA[0].DCR |= DMA_DCR_ERQ_MASK;
     //PORTC_PCR6 = PORT_PCR_MUX(2);
     SPI0_C2 |= SPI_C2_TXDMAE_MASK;
+//    // wait until dma busy flag is cleared
+//    while(DMA_BASE_PTR->DMA[0].DSR_BCR & DMA_DSR_BCR_BSY_MASK);
 }
 
 static void main_init_spi(void)
@@ -141,9 +150,9 @@ static void encodeWS2812B(uint8_t *pIn, uint8_t *pOut, uint32_t len)
 
 #define RESET_BRIGHTNESS 1
 // dead area, used as reset pulse in 1-wire ws2812 interface
-#define SPI_BLACKOUT_WINDOW_SIZE 160
 #define SPI_WS2812_LIGHT_COUNT 84
-static uint8_t rawData[SPI_BLACKOUT_WINDOW_SIZE + 3*3*SPI_WS2812_LIGHT_COUNT];
+static uint8_t spiData[260 + 3*3*SPI_WS2812_LIGHT_COUNT];
+static uint8_t *rawData;
 static rgbData_t rgbData = {.color = {.g=RESET_BRIGHTNESS, .r=0x00, .b=0x00}};
 static bool incrementActive = false;
 static bool scanActive = false;
@@ -202,7 +211,7 @@ static void main_toggle_scan(void)
     scanActive = !scanActive;
     scanPos = 0;
     if(scanActive){
-        for(i=SPI_BLACKOUT_WINDOW_SIZE; i<sizeof(rawData); i+=9){
+        for(i=0; i<SPI_WS2812_LIGHT_COUNT*9; i+=9){
             memcpy(&rawData[i], zeroLed, 9);
         }
     }
@@ -217,31 +226,31 @@ static void main_send_lights(void)
     }
 
     if(scanActive){
-        for(i=SPI_BLACKOUT_WINDOW_SIZE; i<sizeof(rawData); i+=9){
+        for(i=0; i<SPI_WS2812_LIGHT_COUNT*9; i+=9){
             memcpy(&rawData[i], zeroLed, 9);
         }
     }
 
     // encode the sequence, load it at the current scan position (stays at zero
     // if scan inactive)
-    encodeWS2812B(rgbData.byte, &rawData[SPI_BLACKOUT_WINDOW_SIZE + (scanPos * 9)], 3);
+    encodeWS2812B(rgbData.byte, &rawData[(scanPos * 9)], 3);
 
     // load the frame buffer
     if(scanActive){
         // zero the last position, and increment the scan index
-        memcpy(&rawData[SPI_BLACKOUT_WINDOW_SIZE + ((scanPos - 1) % SPI_WS2812_LIGHT_COUNT) * 9],
+        memcpy(&rawData[((scanPos - 1) % SPI_WS2812_LIGHT_COUNT) * 9],
                zeroLed, 9);
         scanPos = (scanPos + 1) % SPI_WS2812_LIGHT_COUNT;
     }
     else{
         // copy the sequence over all leds
-        for(i=SPI_BLACKOUT_WINDOW_SIZE+9; i<sizeof(rawData); i+=9){
-            memcpy(&rawData[i], &rawData[SPI_BLACKOUT_WINDOW_SIZE], 9);
+        for(i=9; i<SPI_WS2812_LIGHT_COUNT*9; i+=9){
+            memcpy(&rawData[i], rawData, 9);
         }
     }
 
     // send the data
-    main_spi_send(rawData, sizeof(rawData));
+    main_spi_send(spiData, sizeof(spiData));
 }
 
 static void main_led(void)
@@ -263,7 +272,7 @@ static void main_rgb(void)
     // refresh every 50 ms
     if(systick_getMs() - rgbTime > 50){
         rgbTime = systick_getMs();
-        main_spi_send(rawData, sizeof(rawData));
+        main_spi_send(spiData, sizeof(spiData));
     }
 }
 
@@ -290,24 +299,32 @@ static void clearPixel(int idx, uint8_t *pBuf)
 //  position, with specified color
 //
 #define NUMBER_OF_DIGITS 2
+#define ROW_LENGTH 12
 static void setChar(int charPos,
                     uint8_t charVal,
                     uint8_t *pBuf,
                     rgbData_t *pColor)
 {
     const char *font = &font5x7[(charVal - 0x20) * 5];
-    int position = charPos * 6; // starting position
+    int position;
     int i,j;
 
     // clear the affected region
     for(i=0; i<7; i++){
+        position = i * 12;
+        if(i & 1){
+            // odd numbered row, reverse position less 6
+            position = position + 6 - (charPos * 6);
+        }
+        else{
+            // even numbered row
+            position += charPos * 6;
+        }
         for(j=0; j<6; j++){
             clearPixel(position + j, pBuf);
         }
-        position =
+        main_spi_send(spiData, sizeof(spiData));
     }
-
-    //
 }
 
 int main(void)
@@ -316,7 +333,7 @@ int main(void)
     uint8_t charBuf[5];
     uint8_t settingCount;
     bool settingActive = false;
-    uint8_t activeChar = 0;
+    uint8_t activeChar = 1;
     int i;
 
     // initialize the necessary
@@ -324,13 +341,14 @@ int main(void)
     main_init_spi();
 
     // init buffer for spi packed data- fixed low pulse of 160 byte-times
-    memset(rawData, 0, sizeof(rawData));
+    rawData = &spiData[160];
+    memset(spiData, 0, sizeof(spiData));
     // encode the sequence, load it at the current scan position (stays at zero
     // if scan inactive)
-    encodeWS2812B(rgbData.byte, &rawData[SPI_BLACKOUT_WINDOW_SIZE + (scanPos * 9)], 3);
+    encodeWS2812B(rgbData.byte, &rawData[(scanPos * 9)], 3);
     // copy the sequence over all leds
-    for(i=SPI_BLACKOUT_WINDOW_SIZE+9; i<sizeof(rawData); i+=9){
-        memcpy(&rawData[i], &rawData[SPI_BLACKOUT_WINDOW_SIZE], 9);
+    for(i=9; i<SPI_WS2812_LIGHT_COUNT*9; i+=9){
+        memcpy(&rawData[i], rawData, 9);
     }
 
     // usb init
@@ -406,8 +424,12 @@ int main(void)
                         if(isPrintable(cdcChar)){
                             setChar(activeChar,
                                     cdcChar,
-                                    &rawData[SPI_BLACKOUT_WINDOW_SIZE],
+                                    rawData,
                                     &rgbData);
+                            activeChar++;
+                            if(activeChar > NUMBER_OF_DIGITS - 1){
+                                activeChar = 0;
+                            }
                         }
                         break;
                 }

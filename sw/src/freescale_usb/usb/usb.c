@@ -242,8 +242,6 @@ void EP_IN_Transfer(uint8_t u8EP,uint8_t *pu8DataPointer,uint8_t u8DataSize)
         u8EP=(uint8_t)(u8EP<<2);
     u8EP+=2;
 
-
-
     /* Assign the proper EP buffer */
     pu8EPBuffer=BufferPointer[u8EP];
 
