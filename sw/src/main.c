@@ -138,7 +138,7 @@ static void encodeWS2812B(uint8_t *pIn, uint8_t *pOut, uint32_t len)
     }
 }
 
-#define RESET_BRIGHTNESS 15
+#define RESET_BRIGHTNESS 7
 // dead area, used as reset pulse in 1-wire ws2812 interface
 #define SPI_BLACKOUT_WINDOW_SIZE 160
 #define SPI_WS2812_LIGHT_COUNT 84
@@ -270,8 +270,8 @@ int main(void)
 {
     uint8_t cdcChar;
     uint8_t charBuf[5];
-    uint8_t pos;
-    bool settingBrightness = false;
+    uint8_t settingCount;
+    bool settingActive = false;
 
     // initialize the necessary
     main_init_io();
@@ -292,65 +292,60 @@ int main(void)
 
         // usb task
         if(usb_main_mainfunction(&cdcChar) != -1){
-            if(settingBrightness){
-                if(cdcChar == '\n' || cdcChar == '\r'){
-                    charBuf[pos] = '\n';
-                    brightness = strtoul((char*)charBuf, NULL, 10);
-                    settingBrightness = false;
-                    if(rgbData.color.r){
-                        rgbData.color.r = brightness;
-                    }
-                    if(rgbData.color.g){
-                        rgbData.color.g = brightness;
-                    }
-                    if(rgbData.color.b){
-                        rgbData.color.b = brightness;
-                    }
-                }
-                else{
-                    charBuf[pos++] = cdcChar;
-                }
-            }
-            else{
+            if(settingActive){
                 switch(cdcChar){
+                    case '\n':
+                    case '\r':
+                        charBuf[settingCount] = '\n';
+                        brightness = strtoul((char*)charBuf, NULL, 10);
+                        if(rgbData.color.r){
+                            rgbData.color.r = brightness;
+                        }
+                        if(rgbData.color.g){
+                            rgbData.color.g = brightness;
+                        }
+                        if(rgbData.color.b){
+                            rgbData.color.b = brightness;
+                        }
                     case 'r':
+                        settingActive = false;
                         rgbData.all = 0;
                         rgbData.color.r = brightness;
                         break;
 
                     case 'g':
+                        settingActive = false;
                         rgbData.all = 0;
                         rgbData.color.g = brightness;
                         break;
 
                     case 'b':
+                        settingActive = false;
                         rgbData.all = 0;
                         rgbData.color.b = brightness;
-                        break;
-
-                    case 'o':
-                        rgbData.all = 0;
-                        break;
-
-                    case 'k':
-                        settingBrightness = true;
-                        pos = 0;
-                        break;
-
-                    case 's':
-                        main_toggle_scan();
                         break;
 
                     case 'i':
+                        settingActive = false;
                         main_toggle_increment();
                         break;
 
-                    case 'a':
-                        // all on
-                        rgbData.all = 0;
-                        rgbData.color.r = brightness;
-                        rgbData.color.g = brightness;
-                        rgbData.color.b = brightness;
+                    case 's':
+                        settingActive = false;
+                        main_toggle_scan();
+                        break;
+
+                    default:
+                        charBuf[settingCount++] = cdcChar;
+                        break;
+
+                }
+            }
+            else{
+                switch(cdcChar){
+                    case 0x11 /* ctrl-q */:
+                        settingActive = true;
+                        settingCount = 0;
                         break;
 
                     default:
