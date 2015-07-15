@@ -5,6 +5,7 @@
 #include "usb_main.h"
 #include <stdlib.h> // strtoul
 #include <stdbool.h>
+#include "font_5x7.h"
 
 static void main_init_io(void)
 {
@@ -138,7 +139,7 @@ static void encodeWS2812B(uint8_t *pIn, uint8_t *pOut, uint32_t len)
     }
 }
 
-#define RESET_BRIGHTNESS 7
+#define RESET_BRIGHTNESS 1
 // dead area, used as reset pulse in 1-wire ws2812 interface
 #define SPI_BLACKOUT_WINDOW_SIZE 160
 #define SPI_WS2812_LIGHT_COUNT 84
@@ -262,8 +263,51 @@ static void main_rgb(void)
     // refresh every 50 ms
     if(systick_getMs() - rgbTime > 50){
         rgbTime = systick_getMs();
-        main_send_lights();
+        main_spi_send(rawData, sizeof(rawData));
     }
+}
+
+//
+// isPrintable  -   is printable ascii?
+//
+static bool isPrintable(uint8_t chr)
+{
+    return (chr > 31) && (chr < 127);
+}
+
+static void setPixel(int idx, uint8_t *pBuf, rgbData_t *pColor)
+{
+    encodeWS2812B(pColor->byte, pBuf + idx, 3);
+}
+
+static void clearPixel(int idx, uint8_t *pBuf)
+{
+    memcpy(pBuf + (idx * 9), zeroLed, 9);
+}
+
+//
+// setChar  -   set character value using bitmap font5x7, at specified character
+//  position, with specified color
+//
+#define NUMBER_OF_DIGITS 2
+static void setChar(int charPos,
+                    uint8_t charVal,
+                    uint8_t *pBuf,
+                    rgbData_t *pColor)
+{
+    const char *font = &font5x7[(charVal - 0x20) * 5];
+    int position = charPos * 6; // starting position
+    int i,j;
+
+    // clear the affected region
+    for(i=0; i<7; i++){
+        for(j=0; j<6; j++){
+            clearPixel(position + j, pBuf);
+        }
+        position =
+    }
+
+    //
 }
 
 int main(void)
@@ -272,6 +316,8 @@ int main(void)
     uint8_t charBuf[5];
     uint8_t settingCount;
     bool settingActive = false;
+    uint8_t activeChar = 0;
+    int i;
 
     // initialize the necessary
     main_init_io();
@@ -279,6 +325,13 @@ int main(void)
 
     // init buffer for spi packed data- fixed low pulse of 160 byte-times
     memset(rawData, 0, sizeof(rawData));
+    // encode the sequence, load it at the current scan position (stays at zero
+    // if scan inactive)
+    encodeWS2812B(rgbData.byte, &rawData[SPI_BLACKOUT_WINDOW_SIZE + (scanPos * 9)], 3);
+    // copy the sequence over all leds
+    for(i=SPI_BLACKOUT_WINDOW_SIZE+9; i<sizeof(rawData); i+=9){
+        memcpy(&rawData[i], &rawData[SPI_BLACKOUT_WINDOW_SIZE], 9);
+    }
 
     // usb init
     usb_main_init();
@@ -349,6 +402,13 @@ int main(void)
                         break;
 
                     default:
+                        // enter character
+                        if(isPrintable(cdcChar)){
+                            setChar(activeChar,
+                                    cdcChar,
+                                    &rawData[SPI_BLACKOUT_WINDOW_SIZE],
+                                    &rgbData);
+                        }
                         break;
                 }
             }

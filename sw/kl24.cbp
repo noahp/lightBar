@@ -41,6 +41,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src/arm_cm0.h" />
+		<Unit filename="src/font_5x7.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/font_5x7.h" />
 		<Unit filename="src/freescale_usb/Settings.h" />
 		<Unit filename="src/freescale_usb/bsp/bsp_KL25.c">
 			<Option compilerVar="CC" />

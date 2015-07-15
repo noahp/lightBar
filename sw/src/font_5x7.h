@@ -6,5 +6,5 @@
 
 #if !defined(FONT_5X7)
 #define FONT_5X7
-const char font5x7[96*5];
+const char font5x7[97*5];
 #endif //FONT_5X7
