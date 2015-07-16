@@ -284,14 +284,18 @@ static bool isPrintable(uint8_t chr)
     return (chr > 31) && (chr < 127);
 }
 
-static void setPixel(int idx, uint8_t *pBuf, rgbData_t *pColor)
+static void setPixel(uint32_t x, int y, uint8_t *pBuf, rgbData_t *pColor)
 {
-    encodeWS2812B(pColor->byte, pBuf + idx * 9, 3);
+    uint32_t offset = (x / 12)*SPI_WS2812_LIGHT_COUNT;
+    offset += y * 12;
+    offset += (y & 1)?(11 - (x % 12)):(x % 12);
+
+    encodeWS2812B(pColor->byte, pBuf + offset * 9, 3);
 }
 
-static void clearPixel(int idx, uint8_t *pBuf)
+static void clearPixel(uint32_t x, uint32_t y, uint8_t *pBuf)
 {
-    memcpy(pBuf + (idx * 9), zeroLed, 9);
+    setPixel(x, y, pBuf, (rgbData_t *)"\x00\x00\x00\x00");
 }
 
 //
@@ -300,44 +304,22 @@ static void clearPixel(int idx, uint8_t *pBuf)
 //
 #define NUMBER_OF_DIGITS 2
 #define ROW_LENGTH 12
-static void setChar(int charPos,
+static void setChar(uint32_t charOffset,
                     uint8_t charVal,
                     uint8_t *pBuf,
                     rgbData_t *pColor)
 {
     const char *font = &font5x7[(charVal - 0x20) * 5];
-    uint8_t charSlice;
-    uint32_t position;
     uint32_t i,j;
 
-    // clear the affected region
-    for(i=0; i<7; i++){
-        position = i * 12;
-        if(i & 1){
-            // odd numbered row, reverse position less 6
-            position = position + 6 - (charPos * 6);
-        }
-        else{
-            // even numbered row
-            position += charPos * 6;
-        }
-        for(j=0; j<6; j++){
-            charSlice = 0;
-            if(i & 1){
-                if(j > 0){
-                    charSlice = font[5-j] & (1 << i);
-                }
+    // set the bits based on the font value
+    for(i=0; i<5; i++){
+        for(j=0; j<7; j++){
+            if(font[i] & 1<<j){
+                setPixel(charOffset + i, j, pBuf, pColor);
             }
             else{
-                if(j < 5){
-                    charSlice = font[j] & (1 << i);
-                }
-            }
-            if(charSlice){
-                setPixel(position + j, pBuf, pColor);
-            }
-            else{
-                clearPixel(position + j, pBuf);
+                clearPixel(charOffset + i, j, pBuf);
             }
         }
     }
@@ -349,7 +331,7 @@ int main(void)
     uint8_t charBuf[5];
     uint8_t settingCount;
     bool settingActive = false;
-    uint8_t activeChar = 0;
+    uint32_t charOffset = 0;
     int i;
 
     // initialize the necessary
@@ -443,13 +425,13 @@ int main(void)
                     default:
                         // enter character
                         if(isPrintable(cdcChar)){
-                            setChar(activeChar,
+                            setChar(charOffset,
                                     cdcChar,
                                     rawData,
                                     &rgbData);
-                            activeChar++;
-                            if(activeChar > NUMBER_OF_DIGITS - 1){
-                                activeChar = 0;
+                            charOffset += 6;
+                            if(charOffset > (NUMBER_OF_DIGITS - 1) * 6){
+                                charOffset = 0;
                             }
                         }
                         break;
