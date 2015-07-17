@@ -67,6 +67,7 @@ void CDC_Engine(void)
             while(gu8USB_State!=uENUMERATED)
             {
                 (void)u8CDCState;
+                break;
             };
 
             if (enum_msg)
