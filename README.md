@@ -1,4 +1,5 @@
 # lightBar
+![prototype in action](http://i.imgur.com/uqmlhOo.gif)  
 Basic serial addressable WS2812B RGB LED banner. Comprised of multiple 12x7 modules.
 
 # hardware
