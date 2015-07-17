@@ -156,6 +156,7 @@ static uint8_t spiData[SPI_DEAD_PULSE_LENGTH + 3*3*SPI_WS2812_LIGHT_COUNT];
 static uint8_t *rawData;
 static rgbData_t rgbData = {.color = {.g=RESET_BRIGHTNESS, .r=0x00, .b=0x00}};
 static bool incrementActive = false;
+static bool scrollActive = false;
 static const uint8_t zeroLed[] = {0x92, 0x49, 0x24, 0x92, 0x49, 0x24, 0x92, 0x49, 0x24};
 static uint8_t brightness = RESET_BRIGHTNESS;
 static uint32_t dataOff = RESET_BRIGHTNESS;
@@ -274,7 +275,7 @@ static void main_rgb(void)
     static uint32_t scrollIdx = 0;
     static uint32_t scrollTime = 0;
 
-    // scroll!
+    // print chars
     if(systick_getMs() - scrollTime > 100){
         scrollTime = systick_getMs();
         setChar(scrollIdx,
@@ -285,11 +286,16 @@ static void main_rgb(void)
                 printChars[1],
                 rawData,
                 &rgbData);
-        scrollIdx--;
-        if(scrollIdx > 11){
-            scrollIdx = 11;
+
+        // scroll?
+        if(scrollActive){
+            scrollIdx--;
+            if(scrollIdx > 11){
+                scrollIdx = 11;
+            }
         }
 
+        // sweep color?
         if(incrementActive){
             main_increment_lights(brightness);
         }
@@ -376,6 +382,11 @@ int main(void)
                     case 'i':
                         settingActive = false;
                         main_toggle_increment();
+                        break;
+
+                    case 's':
+                        settingActive = false;
+                        scrollActive = !scrollActive;
                         break;
 
                     default:
