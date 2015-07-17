@@ -150,13 +150,12 @@ static void encodeWS2812B(uint8_t *pIn, uint8_t *pOut, uint32_t len)
 
 #define RESET_BRIGHTNESS 7
 // dead area, used as reset pulse in 1-wire ws2812 interface
+#define SPI_DEAD_PULSE_LENGTH 260
 #define SPI_WS2812_LIGHT_COUNT 84
-static uint8_t spiData[260 + 3*3*SPI_WS2812_LIGHT_COUNT];
+static uint8_t spiData[SPI_DEAD_PULSE_LENGTH + 3*3*SPI_WS2812_LIGHT_COUNT];
 static uint8_t *rawData;
 static rgbData_t rgbData = {.color = {.g=RESET_BRIGHTNESS, .r=0x00, .b=0x00}};
 static bool incrementActive = false;
-static bool scanActive = false;
-static uint32_t scanPos = 0;
 static const uint8_t zeroLed[] = {0x92, 0x49, 0x24, 0x92, 0x49, 0x24, 0x92, 0x49, 0x24};
 static uint8_t brightness = RESET_BRIGHTNESS;
 static uint32_t dataOff = RESET_BRIGHTNESS;
@@ -204,55 +203,6 @@ static void main_toggle_increment(void)
     }
 }
 
-static void main_toggle_scan(void)
-{
-    int i;
-
-    scanActive = !scanActive;
-    scanPos = 0;
-    if(scanActive){
-        for(i=0; i<SPI_WS2812_LIGHT_COUNT*9; i+=9){
-            memcpy(&rawData[i], zeroLed, 9);
-        }
-    }
-}
-
-static void main_send_lights(void)
-{
-    int i;
-
-    if(incrementActive){
-        main_increment_lights(brightness);
-    }
-
-    if(scanActive){
-        for(i=0; i<SPI_WS2812_LIGHT_COUNT*9; i+=9){
-            memcpy(&rawData[i], zeroLed, 9);
-        }
-    }
-
-    // encode the sequence, load it at the current scan position (stays at zero
-    // if scan inactive)
-    encodeWS2812B(rgbData.byte, &rawData[(scanPos * 9)], 3);
-
-    // load the frame buffer
-    if(scanActive){
-        // zero the last position, and increment the scan index
-        memcpy(&rawData[((scanPos - 1) % SPI_WS2812_LIGHT_COUNT) * 9],
-               zeroLed, 9);
-        scanPos = (scanPos + 1) % SPI_WS2812_LIGHT_COUNT;
-    }
-    else{
-        // copy the sequence over all leds
-        for(i=9; i<SPI_WS2812_LIGHT_COUNT*9; i+=9){
-            memcpy(&rawData[i], rawData, 9);
-        }
-    }
-
-    // send the data
-    main_spi_send(spiData, sizeof(spiData));
-}
-
 static void main_led(void)
 {
     static uint32_t blinkTime = 0;
@@ -262,17 +212,6 @@ static void main_led(void)
         blinkTime = systick_getMs();
         // toggle
         GPIOB_PTOR = (1 << 0);
-    }
-}
-
-static void main_rgb(void)
-{
-    static uint32_t rgbTime = 0;
-
-    // refresh every 50 ms
-    if(systick_getMs() - rgbTime > 50){
-        rgbTime = systick_getMs();
-        main_spi_send(spiData, sizeof(spiData));
     }
 }
 
@@ -316,22 +255,61 @@ static void setChar(uint32_t charOffset,
     for(i=0; i<5; i++){
         for(j=0; j<7; j++){
             if(font[i] & 1<<j){
-                setPixel(charOffset + i, j, pBuf, pColor);
+                setPixel((charOffset + i) % ROW_LENGTH, j, pBuf, pColor);
             }
             else{
-                clearPixel(charOffset + i, j, pBuf);
+                clearPixel((charOffset + i) % ROW_LENGTH, j, pBuf);
             }
         }
+    }
+    for(j=0; j<7; j++){
+        clearPixel((charOffset + 5) % ROW_LENGTH, j, pBuf);
+    }
+}
+
+uint8_t printChars[2] = {'1', '2'};
+static void main_rgb(void)
+{
+    static uint32_t rgbTime = 0;
+    static uint32_t scrollIdx = 0;
+    static uint32_t scrollTime = 0;
+
+    // scroll!
+    if(systick_getMs() - scrollTime > 100){
+        scrollTime = systick_getMs();
+        setChar(scrollIdx,
+                printChars[0],
+                rawData,
+                &rgbData);
+        setChar(scrollIdx + 6,
+                printChars[1],
+                rawData,
+                &rgbData);
+        scrollIdx--;
+        if(scrollIdx > 11){
+            scrollIdx = 11;
+        }
+
+        if(incrementActive){
+            main_increment_lights(brightness);
+        }
+
+    }
+
+    // refresh every 50 ms
+    if(systick_getMs() - rgbTime > 50){
+        rgbTime = systick_getMs();
+        main_spi_send(spiData, sizeof(spiData));
     }
 }
 
 int main(void)
 {
     uint8_t cdcChar;
+    uint8_t activeChar = 0;
     uint8_t charBuf[5];
     uint8_t settingCount;
     bool settingActive = false;
-    uint32_t charOffset = 0;
     int i;
 
     // initialize the necessary
@@ -339,17 +317,9 @@ int main(void)
     main_init_spi();
 
     // init buffer for spi packed data- fixed low pulse of 160 byte-times
-    rawData = &spiData[160];
+    rawData = &spiData[SPI_DEAD_PULSE_LENGTH];
     memset(spiData, 0, sizeof(spiData));
-    // encode the sequence, load it at the current scan position (stays at zero
-    // if scan inactive)
-    encodeWS2812B(rgbData.byte, &rawData[(scanPos * 9)], 3);
-    // copy the sequence over all leds
-    for(i=9; i<SPI_WS2812_LIGHT_COUNT*9; i+=9){
-        memcpy(&rawData[i], rawData, 9);
-    }
-
-    // actually, zero them all
+    // zero all pixels
     for(i=0; i<SPI_WS2812_LIGHT_COUNT*9; i+=9){
         memcpy(&rawData[i], zeroLed, 9);
     }
@@ -370,17 +340,21 @@ int main(void)
                 switch(cdcChar){
                     case '\n':
                     case '\r':
-                        charBuf[settingCount] = '\n';
-                        brightness = strtoul((char*)charBuf, NULL, 10);
-                        if(rgbData.color.r){
-                            rgbData.color.r = brightness;
+                        settingActive = false;
+                        charBuf[settingCount] = '\0';
+                        if(charBuf[0] == 'k'){
+                            brightness = strtoul((char*)&charBuf[1], NULL, 10);
+                            if(rgbData.color.r){
+                                rgbData.color.r = brightness;
+                            }
+                            if(rgbData.color.g){
+                                rgbData.color.g = brightness;
+                            }
+                            if(rgbData.color.b){
+                                rgbData.color.b = brightness;
+                            }
                         }
-                        if(rgbData.color.g){
-                            rgbData.color.g = brightness;
-                        }
-                        if(rgbData.color.b){
-                            rgbData.color.b = brightness;
-                        }
+                        break;
                     case 'r':
                         settingActive = false;
                         rgbData.all = 0;
@@ -404,15 +378,9 @@ int main(void)
                         main_toggle_increment();
                         break;
 
-                    case 's':
-                        settingActive = false;
-                        main_toggle_scan();
-                        break;
-
                     default:
                         charBuf[settingCount++] = cdcChar;
                         break;
-
                 }
             }
             else{
@@ -425,13 +393,9 @@ int main(void)
                     default:
                         // enter character
                         if(isPrintable(cdcChar)){
-                            setChar(charOffset,
-                                    cdcChar,
-                                    rawData,
-                                    &rgbData);
-                            charOffset += 6;
-                            if(charOffset > (NUMBER_OF_DIGITS - 1) * 6){
-                                charOffset = 0;
+                            printChars[activeChar++] = cdcChar;
+                            if(activeChar > NUMBER_OF_DIGITS - 1){
+                                activeChar = 0;
                             }
                         }
                         break;
