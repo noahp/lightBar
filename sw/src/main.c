@@ -155,8 +155,9 @@ static void encodeWS2812B(uint8_t *pIn, uint8_t *pOut, uint32_t len)
 static uint8_t spiData[SPI_DEAD_PULSE_LENGTH + 3*3*SPI_WS2812_LIGHT_COUNT];
 static uint8_t *rawData;
 static rgbData_t rgbData = {.color = {.g=RESET_BRIGHTNESS, .r=0x00, .b=0x00}};
-static bool incrementActive = false;
-static bool scrollActive = false;
+static bool incrementActive = true;
+static bool scrollActive = true;
+static bool testActive = false;
 static const uint8_t zeroLed[] = {0x92, 0x49, 0x24, 0x92, 0x49, 0x24, 0x92, 0x49, 0x24};
 static uint8_t brightness = RESET_BRIGHTNESS;
 static uint32_t dataOff = RESET_BRIGHTNESS;
@@ -274,18 +275,26 @@ static void main_rgb(void)
     static uint32_t rgbTime = 0;
     static uint32_t scrollIdx = 0;
     static uint32_t scrollTime = 0;
+    int i;
 
     // print chars
     if(systick_getMs() - scrollTime > 100){
-        scrollTime = systick_getMs();
-        setChar(scrollIdx,
-                printChars[0],
-                rawData,
-                &rgbData);
-        setChar(scrollIdx + 6,
-                printChars[1],
-                rawData,
-                &rgbData);
+        if(testActive){
+            for(i=0; i<SPI_WS2812_LIGHT_COUNT; i++){
+                encodeWS2812B(rgbData.byte, rawData + i * 9, 3);
+            }
+        }
+        else{
+            scrollTime = systick_getMs();
+            setChar(scrollIdx,
+                    printChars[0],
+                    rawData,
+                    &rgbData);
+            setChar(scrollIdx + 6,
+                    printChars[1],
+                    rawData,
+                    &rgbData);
+        }
 
         // scroll?
         if(scrollActive){
@@ -387,6 +396,11 @@ int main(void)
                     case 's':
                         settingActive = false;
                         scrollActive = !scrollActive;
+                        break;
+
+                    case 't':
+                        settingActive = false;
+                        testActive = !testActive;
                         break;
 
                     default:
