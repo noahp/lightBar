@@ -36,25 +36,33 @@ static void main_init_io(void)
 //    while(systick_getMs() - start < ms);
 //}
 
-static void main_spi_send(uint8_t *pData, uint32_t len)
+static void main_init_uart(void)
 {
-    // wait until dma busy flag is cleared
-    while(DMA_BASE_PTR->DMA[0].DSR_BCR & DMA_DSR_BCR_BSY_MASK);
-//    // pull spi mosi low (p27) for at least 50us
-//    PORTC_PCR6 = PORT_PCR_MUX(1);
-//    GPIOC_PCOR = (1 << 6);
-//    delay_ms(2);
-    // reset dma
-    DMA_BASE_PTR->DMA[0].DSR_BCR = DMA_DSR_BCR_DONE_MASK;
-    // write to the dma
-    DMA_BASE_PTR->DMA[0].SAR = (uint32_t)pData;
-    DMA_BASE_PTR->DMA[0].DSR_BCR = len & 0x00ffffff;
-    // enable dma on the spi
-    DMA_BASE_PTR->DMA[0].DCR |= DMA_DCR_ERQ_MASK;
-    //PORTC_PCR6 = PORT_PCR_MUX(2);
-    SPI0_C2 |= SPI_C2_TXDMAE_MASK;
-//    // wait until dma busy flag is cleared
-//    while(DMA_BASE_PTR->DMA[0].DSR_BCR & DMA_DSR_BCR_BSY_MASK);
+    uint32_t baud;
+
+    // init uart0
+    // enable clocks for port a and uart0
+    SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK;
+    SIM_SCGC4 |= SIM_SCGC4_UART0_MASK;
+    SIM_SOPT2 |= SIM_SOPT2_UART0SRC(1); // select MCGPLLCLK/2 clock
+
+    // configure io pins for uart0- alt 2
+    PORTA_PCR11 = PORT_PCR_MUX(2);
+    PORTA_PCR12 = PORT_PCR_MUX(2);
+
+    // set oversampling ratio to 25
+    UART0_C4 = UART0_C4_OSR(25-1);
+
+    // set baud rate to 9600
+    baud = (48000000 / 9600) / 25;  // <- baud = CLOCK / ((OSR+1)*BR)
+    UART0_BDH = UART0_BDH_SBR((baud >> 8) & 0x1F);  // upper 5 bits
+    UART0_BDL = UART0_BDL_SBR(baud & 0xFF);         // lower 8 bits
+
+    // turn on tx + rx
+    UART0_C2 = UART0_C2_RE_MASK | UART0_C2_TE_MASK;
+
+    // send a char?
+    UART0_D = 'N';
 }
 
 static void main_init_spi(void)
@@ -107,6 +115,27 @@ static void main_init_spi(void)
                                DMA_DCR_D_REQ_MASK;
 }
 
+static void main_spi_send(uint8_t *pData, uint32_t len)
+{
+    // wait until dma busy flag is cleared
+    while(DMA_BASE_PTR->DMA[0].DSR_BCR & DMA_DSR_BCR_BSY_MASK);
+//    // pull spi mosi low (p27) for at least 50us
+//    PORTC_PCR6 = PORT_PCR_MUX(1);
+//    GPIOC_PCOR = (1 << 6);
+//    delay_ms(2);
+    // reset dma
+    DMA_BASE_PTR->DMA[0].DSR_BCR = DMA_DSR_BCR_DONE_MASK;
+    // write to the dma
+    DMA_BASE_PTR->DMA[0].SAR = (uint32_t)pData;
+    DMA_BASE_PTR->DMA[0].DSR_BCR = len & 0x00ffffff;
+    // enable dma on the spi
+    DMA_BASE_PTR->DMA[0].DCR |= DMA_DCR_ERQ_MASK;
+    //PORTC_PCR6 = PORT_PCR_MUX(2);
+    SPI0_C2 |= SPI_C2_TXDMAE_MASK;
+//    // wait until dma busy flag is cleared
+//    while(DMA_BASE_PTR->DMA[0].DSR_BCR & DMA_DSR_BCR_BSY_MASK);
+}
+
 static void main_led(void)
 {
     static uint32_t blinkTime = 0;
@@ -131,6 +160,7 @@ int main(void)
     // initialize the necessary
     main_init_io();
     main_init_spi();
+    main_init_uart();
 
     // rgb init
     memset(spiData, 0, sizeof(spiData));
