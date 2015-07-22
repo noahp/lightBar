@@ -12,7 +12,6 @@
 #define RESET_BRIGHTNESS 7
 static rgbData_t rgbData = {.color = {.g=RESET_BRIGHTNESS, .r=0x00, .b=0x00}};
 
-#define NUMBER_OF_DIGITS 2
 #define ROW_LENGTH 12
 
 static uint8_t *rawData;
@@ -22,8 +21,8 @@ static bool testActive = false;
 static const uint8_t zeroLed[] = {0x92, 0x49, 0x24, 0x92, 0x49, 0x24, 0x92, 0x49, 0x24};
 static uint8_t brightness = RESET_BRIGHTNESS;
 static uint32_t dataOff = RESET_BRIGHTNESS;
-static uint8_t printChars[2] = {'1', '2'};
-static uint8_t activeChar = 0;
+static uint8_t *printChars;
+static uint32_t printLength;
 
 //
 //  encodeWS2812B - encode 8 bits into 24 bits. pOut is 3x pIn length. len is
@@ -99,6 +98,9 @@ void rgb_mgr_init(uint8_t *pBuf)
     for(i=0; i<SPI_WS2812_LIGHT_COUNT*9; i+=9){
         memcpy(&rawData[i], zeroLed, 9);
     }
+
+    // set starting string
+    rgb_mgr_set_new_str("Hi!", sizeof("Hi!") -1);
 }
 
 void rgb_mgr_set_brightness(uint8_t newBrightness)
@@ -157,7 +159,9 @@ bool rgb_mgr_is_printable(uint8_t chr)
 
 static void setPixel(uint32_t x, int y, uint8_t *pBuf, rgbData_t *pColor)
 {
-    uint32_t offset = (x / 12)*SPI_WS2812_LIGHT_COUNT;
+    uint32_t offset;
+
+    offset = (x / 12)*SPI_WS2812_LIGHT_COUNT;
     offset += y * 12;
     offset += (y & 1)?(11 - (x % 12)):(x % 12);
 
@@ -184,11 +188,14 @@ void rgb_mgr_setChar(uint32_t charOffset,
     // set the bits based on the font value
     for(i=0; i<5; i++){
         for(j=0; j<7; j++){
-            if(font[i] & 1<<j){
-                setPixel((charOffset + i) % ROW_LENGTH, j, pBuf, pColor);
+            if(charOffset + i >= ROW_LENGTH){
+                clearPixel((charOffset + i) % ROW_LENGTH, j, pBuf);
+            }
+            else if(font[i] & 1<<j){
+                setPixel((charOffset + i), j, pBuf, pColor);
             }
             else{
-                clearPixel((charOffset + i) % ROW_LENGTH, j, pBuf);
+                clearPixel((charOffset + i), j, pBuf);
             }
         }
     }
@@ -197,18 +204,17 @@ void rgb_mgr_setChar(uint32_t charOffset,
     }
 }
 
-void rgb_mgr_set_new_char(uint8_t newChar)
+void rgb_mgr_set_new_str(char *newStr, uint32_t len)
 {
-    printChars[activeChar++] = newChar;
-    if(activeChar > NUMBER_OF_DIGITS - 1){
-        activeChar = 0;
-    }
+    printChars = (uint8_t *)newStr;
+    printLength = len;
 }
 
 void rgb_mgr_main_function(void)
 {
     static uint32_t scrollIdx = 0;
     static uint32_t scrollTime = 0;
+    static uint32_t charPos = 0;
     int i;
 
     // print chars
@@ -220,15 +226,21 @@ void rgb_mgr_main_function(void)
         }
         else{
             scrollTime = systick_getMs();
-            rgb_mgr_setChar(scrollIdx, printChars[0], rawData, &rgbData);
-            rgb_mgr_setChar(scrollIdx + 6, printChars[1], rawData, &rgbData);
+            rgb_mgr_setChar(scrollIdx, printChars[charPos], rawData, &rgbData);
+            if(charPos + 1 < printLength){
+                rgb_mgr_setChar(scrollIdx + 6, printChars[charPos + 1], rawData, &rgbData);
+            }
+            else{
+                rgb_mgr_setChar(scrollIdx + 6, ' ', rawData, &rgbData);
+            }
         }
 
         // scroll?
         if(scrollActive){
             scrollIdx--;
-            if(scrollIdx > 11){
-                scrollIdx = 11;
+            if(scrollIdx > 5){
+                charPos = (charPos + 1) % printLength;
+                scrollIdx = 5;
             }
         }
 

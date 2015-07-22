@@ -163,10 +163,12 @@ static int main_poll_uart(uint8_t *pChr)
 
 int main(void)
 {
+    #define SIZE_OF_CHARBUF 16
     static uint32_t rgbTime = 0;
-    uint8_t charBuf[5];
+    uint8_t charBuf[SIZE_OF_CHARBUF];
     uint8_t settingCount;
     bool settingActive = false;
+    bool inputActive = false;
     uint8_t rxData;
     int gotCharacter = -1;
     rgbData_t tempColor;
@@ -255,6 +257,22 @@ int main(void)
                         break;
                 }
             }
+            else if(inputActive){
+                switch(rxData){
+                    case '\n':
+                    case '\r':
+                        inputActive = false;
+                        break;
+
+                    default:
+                        // enter character
+                        if(rgb_mgr_is_printable(rxData) && (settingCount < SIZE_OF_CHARBUF)){
+                            charBuf[settingCount++] = rxData;
+                            rgb_mgr_set_new_str(charBuf, settingCount);
+                        }
+                        break;
+                }
+            }
             else{
                 switch(rxData){
                     case 0x11 /* ctrl-q */:
@@ -262,11 +280,12 @@ int main(void)
                         settingCount = 0;
                         break;
 
+                    case 0x12 /* ctrl-r */:
+                        inputActive = true;
+                        settingCount = 0;
+                        break;
+
                     default:
-                        // enter character
-                        if(rgb_mgr_is_printable(rxData)){
-                            rgb_mgr_set_new_char(rxData);
-                        }
                         break;
                 }
             }

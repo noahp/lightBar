@@ -31,7 +31,7 @@ void rgb_mgr_toggle_scroll(void);
 void rgb_mgr_toggle_test(void);
 void rgb_mgr_toggle_increment(void);
 bool rgb_mgr_is_printable(uint8_t chr);
-void rgb_mgr_set_new_char(uint8_t newChar);
+void rgb_mgr_set_new_str(char *newStr, uint32_t len);
 void rgb_mgr_main_function(void);
 
 #endif // RGB_MGR_H
