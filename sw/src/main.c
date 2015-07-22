@@ -64,8 +64,8 @@ static void main_init_uart(void)
     // turn on tx + rx
     UART0_C2 = UART0_C2_RE_MASK | UART0_C2_TE_MASK;
 
-    // send a char?
-    UART0_D = 'N';
+//    // send a char?
+//    UART0_D = 'N';
 }
 
 static void main_init_spi(void)
@@ -151,13 +151,24 @@ static void main_led(void)
     }
 }
 
+static int main_poll_uart(uint8_t *pChr)
+{
+    if(UART0_S1 & UART0_S1_RDRF_MASK){
+        *pChr = UART0_D;
+        return 1;
+    }
+
+    return -1;
+}
+
 int main(void)
 {
     static uint32_t rgbTime = 0;
-    uint8_t cdcChar;
     uint8_t charBuf[5];
     uint8_t settingCount;
     bool settingActive = false;
+    uint8_t rxData;
+    int gotCharacter = -1;
     rgbData_t tempColor;
 
     // initialize the necessary
@@ -186,9 +197,15 @@ int main(void)
         }
 
         // usb task
-        if(usb_main_mainfunction(&cdcChar) != -1){
+        gotCharacter = usb_main_mainfunction(&rxData);
+
+        // check for incoming uart characters if nothing received on usb
+        if(gotCharacter == -1){
+            gotCharacter = main_poll_uart(&rxData);
+        }
+        if(gotCharacter != -1){
             if(settingActive){
-                switch(cdcChar){
+                switch(rxData){
                     case '\n':
                     case '\r':
                         settingActive = false;
@@ -234,12 +251,12 @@ int main(void)
                         break;
 
                     default:
-                        charBuf[settingCount++] = cdcChar;
+                        charBuf[settingCount++] = rxData;
                         break;
                 }
             }
             else{
-                switch(cdcChar){
+                switch(rxData){
                     case 0x11 /* ctrl-q */:
                         settingActive = true;
                         settingCount = 0;
@@ -247,8 +264,8 @@ int main(void)
 
                     default:
                         // enter character
-                        if(rgb_mgr_is_printable(cdcChar)){
-                            rgb_mgr_set_new_char(cdcChar);
+                        if(rgb_mgr_is_printable(rxData)){
+                            rgb_mgr_set_new_char(rxData);
                         }
                         break;
                 }
