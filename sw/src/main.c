@@ -44,11 +44,14 @@ static void main_init_uart(void)
     // enable clocks for port a and uart0
     SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK;
     SIM_SCGC4 |= SIM_SCGC4_UART0_MASK;
-    SIM_SOPT2 |= SIM_SOPT2_UART0SRC(1); // select MCGPLLCLK/2 clock
+    SIM_SOPT2 |= SIM_SOPT2_UART0SRC(1); // select MCGFLLCLK clock
 
     // configure io pins for uart0- alt 2
-    PORTA_PCR11 = PORT_PCR_MUX(2);
-    PORTA_PCR12 = PORT_PCR_MUX(2);
+    PORTA_PCR1 = PORT_PCR_MUX(2);
+    PORTA_PCR2 = PORT_PCR_MUX(2);
+
+    // set output mode for TX, pa12
+    GPIOA_PDDR |= (1 << 2);
 
     // set oversampling ratio to 25
     UART0_C4 = UART0_C4_OSR(25-1);
