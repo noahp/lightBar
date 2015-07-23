@@ -9,7 +9,7 @@
 #if !defined(RGB_MGR_H)
 #define RGB_MGR_H
 
-#define SPI_WS2812_LIGHT_COUNT 84
+#define SPI_WS2812_LIGHT_COUNT 84*2
 
 // color type
 typedef union rgbData_u {
