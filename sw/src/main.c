@@ -9,7 +9,7 @@
 
 // dead area, used as reset pulse in 1-wire ws2812 interface
 #define SPI_DEAD_PULSE_LENGTH 260
-static uint8_t spiData[SPI_DEAD_PULSE_LENGTH + 3*3*SPI_WS2812_LIGHT_COUNT];
+static uint8_t spiData[SPI_DEAD_PULSE_LENGTH + 3*3*RGB_MGR_PANEL_COUNT*RGB_MGR_LEDS_PER_PANEL];
 
 static void main_init_io(void)
 {

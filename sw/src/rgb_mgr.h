@@ -9,12 +9,13 @@
 #if !defined(RGB_MGR_H)
 #define RGB_MGR_H
 
-#define SPI_WS2812_LIGHT_COUNT 84*2
+#define RGB_MGR_LEDS_PER_PANEL 84
+#define RGB_MGR_PANEL_COUNT 2
 
 // color type
 typedef union rgbData_u {
     uint32_t all;
-    uint8_t byte[4];
+    uint8_t bytes[4];
     struct {
         uint8_t g;
         uint8_t r;
@@ -31,7 +32,7 @@ void rgb_mgr_toggle_scroll(void);
 void rgb_mgr_toggle_test(void);
 void rgb_mgr_toggle_increment(void);
 bool rgb_mgr_is_printable(uint8_t chr);
-void rgb_mgr_set_new_str(char *newStr, uint32_t len);
+void rgb_mgr_set_new_str(uint8_t *newStr, uint32_t len);
 void rgb_mgr_main_function(void);
 
 #endif // RGB_MGR_H

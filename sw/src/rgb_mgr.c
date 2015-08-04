@@ -12,12 +12,12 @@
 #define RESET_BRIGHTNESS 7
 static rgbData_t rgbData = {.color = {.g=RESET_BRIGHTNESS, .r=0x00, .b=0x00}};
 
-#define ROW_LENGTH 12
+#define ROW_LENGTH 12*RGB_MGR_PANEL_COUNT
 
 static uint8_t *rawData;
 static bool incrementActive = true;
 static bool scrollActive = true;
-static bool testActive = false;
+static bool testActive = true;
 static const uint8_t zeroLed[] = {0x92, 0x49, 0x24, 0x92, 0x49, 0x24, 0x92, 0x49, 0x24};
 static uint8_t brightness = RESET_BRIGHTNESS;
 static uint32_t dataOff = RESET_BRIGHTNESS;
@@ -51,9 +51,9 @@ static void encodeWS2812B(uint8_t *pIn, uint8_t *pOut, uint32_t len)
 
         output.all >>= 3;
 
-        pOut[3*j+0] = output.byte[2];
-        pOut[3*j+1] = output.byte[1];
-        pOut[3*j+2] = output.byte[0];
+        pOut[3*j+0] = output.bytes[2];
+        pOut[3*j+1] = output.bytes[1];
+        pOut[3*j+2] = output.bytes[0];
     }
 }
 
@@ -88,19 +88,27 @@ static void rgb_mgr_increment_lights(uint8_t maxBrightness)
     dataOff = (dataOff + 1) % (maxBrightness * 6);
 }
 
-void rgb_mgr_init(uint8_t *pBuf)
+static void clear_display(void)
 {
     int i;
 
-    // init buffer for spi packed data- fixed low pulse of 160 byte-times
-    rawData = pBuf;
     // zero all pixels
-    for(i=0; i<SPI_WS2812_LIGHT_COUNT*9; i+=9){
+    for(i=0; i<RGB_MGR_PANEL_COUNT*(RGB_MGR_LEDS_PER_PANEL)*9; i+=9){
         memcpy(&rawData[i], zeroLed, 9);
     }
 
+}
+
+void rgb_mgr_init(uint8_t *pBuf)
+{
+
+    // init buffer for spi packed data- fixed low pulse of 160 byte-times
+    rawData = pBuf;
+
+    clear_display();
+
     // set starting string
-    rgb_mgr_set_new_str("Hi!", sizeof("Hi!") -1);
+    rgb_mgr_set_new_str((uint8_t*)"Hi!", sizeof("Hi!") -1);
 }
 
 void rgb_mgr_set_brightness(uint8_t newBrightness)
@@ -161,11 +169,11 @@ static void setPixel(uint32_t x, int y, uint8_t *pBuf, rgbData_t *pColor)
 {
     uint32_t offset;
 
-    offset = (x / 12)*SPI_WS2812_LIGHT_COUNT;
+    offset = (x / 12)*(RGB_MGR_LEDS_PER_PANEL);
     offset += y * 12;
     offset += (y & 1)?(11 - (x % 12)):(x % 12);
 
-    encodeWS2812B(pColor->byte, pBuf + offset * 9, 3);
+    encodeWS2812B(pColor->bytes, pBuf + offset * 9, 3);
 }
 
 static void clearPixel(uint32_t x, uint32_t y, uint8_t *pBuf)
@@ -204,7 +212,7 @@ void rgb_mgr_setChar(uint32_t charOffset,
     }
 }
 
-void rgb_mgr_set_new_str(char *newStr, uint32_t len)
+void rgb_mgr_set_new_str(uint8_t *newStr, uint32_t len)
 {
     printChars = (uint8_t *)newStr;
     printLength = len;
@@ -216,12 +224,17 @@ void rgb_mgr_main_function(void)
     static uint32_t scrollTime = 0;
     static uint32_t charPos = 0;
     int i;
+//    static uint32_t xPos = 0;
 
     // print chars
     if(systick_getMs() - scrollTime > 100){
         if(testActive){
-            for(i=0; i<SPI_WS2812_LIGHT_COUNT; i++){
-                encodeWS2812B(rgbData.byte, rawData + i * 9, 3);
+            scrollTime = systick_getMs() - 25;
+//            clear_display();
+//            setPixel(xPos%(12*RGB_MGR_PANEL_COUNT), xPos/(12*RGB_MGR_PANEL_COUNT), rawData, &rgbData);
+//            xPos = (xPos + 1)%(RGB_MGR_PANEL_COUNT*RGB_MGR_LEDS_PER_PANEL);
+            for(i=0; i<RGB_MGR_PANEL_COUNT*RGB_MGR_LEDS_PER_PANEL; i++){
+                encodeWS2812B(rgbData.bytes, rawData + i * 9, 3);
             }
         }
         else{
