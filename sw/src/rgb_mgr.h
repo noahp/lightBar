@@ -24,7 +24,7 @@ typedef union rgbData_u {
     } color;
 }rgbData_t;
 
-void rgb_mgr_init(uint8_t *pBuf);
+void rgb_mgr_init(uint8_t *pBuf, uint32_t bufSize);
 void rgb_mgr_set_brightness(uint8_t newBrightness);
 void rgb_mgr_set_color(rgbData_t *newColor);
 uint8_t rgb_mgr_get_brightness(void);

@@ -8,6 +8,7 @@
 #include "font_5x7.h"
 #include "systick.h"
 #include <string.h>
+#include <stdlib.h>
 
 #define RESET_BRIGHTNESS 7
 static rgbData_t rgbData = {.color = {.g=RESET_BRIGHTNESS, .r=0x00, .b=0x00}};
@@ -15,9 +16,10 @@ static rgbData_t rgbData = {.color = {.g=RESET_BRIGHTNESS, .r=0x00, .b=0x00}};
 #define ROW_LENGTH 12*RGB_MGR_PANEL_COUNT
 
 static uint8_t *rawData;
+static uint32_t rawDataLen = 0;
 static bool incrementActive = true;
 static bool scrollActive = true;
-static bool testActive = true;
+static bool testActive = false;//true;
 static const uint8_t zeroLed[] = {0x92, 0x49, 0x24, 0x92, 0x49, 0x24, 0x92, 0x49, 0x24};
 static uint8_t brightness = RESET_BRIGHTNESS;
 static uint32_t dataOff = RESET_BRIGHTNESS;
@@ -99,16 +101,17 @@ static void clear_display(void)
 
 }
 
-void rgb_mgr_init(uint8_t *pBuf)
+void rgb_mgr_init(uint8_t *pBuf, uint32_t bufSize)
 {
 
     // init buffer for spi packed data- fixed low pulse of 160 byte-times
     rawData = pBuf;
+    rawDataLen = bufSize;
 
     clear_display();
 
     // set starting string
-    rgb_mgr_set_new_str((uint8_t*)"Hi!", sizeof("Hi!") -1);
+    rgb_mgr_set_new_str((uint8_t*)"Happy Halloween!  ", sizeof("Happy Halloween!  ") -1);
 }
 
 void rgb_mgr_set_brightness(uint8_t newBrightness)
@@ -165,7 +168,7 @@ bool rgb_mgr_is_printable(uint8_t chr)
     return (chr > 31) && (chr < 127);
 }
 
-static void setPixel(uint32_t x, int y, uint8_t *pBuf, rgbData_t *pColor)
+static void setPixel(uint32_t x, int y, uint8_t *pBuf, uint32_t bufSize, rgbData_t *pColor)
 {
     uint32_t offset;
 
@@ -173,42 +176,45 @@ static void setPixel(uint32_t x, int y, uint8_t *pBuf, rgbData_t *pColor)
     offset += y * 12;
     offset += (y & 1)?(11 - (x % 12)):(x % 12);
 
-    encodeWS2812B(pColor->bytes, pBuf + offset * 9, 3);
+    if(offset * 9 + 3 < bufSize){
+        encodeWS2812B(pColor->bytes, pBuf + offset * 9, 3);
+    }
 }
 
-static void clearPixel(uint32_t x, uint32_t y, uint8_t *pBuf)
+static void clearPixel(uint32_t x, uint32_t y, uint8_t *pBuf, uint32_t bufSize)
 {
-    setPixel(x, y, pBuf, (rgbData_t *)"\x00\x00\x00\x00");
+    setPixel(x, y, pBuf, bufSize, (rgbData_t *)"\x00\x00\x00\x00");
 }
 
 //
 // setChar  -   set character value using bitmap font5x7, at specified character
-//  position, with specified color
+//  position, with specified color. truncates on buffer overflow, set buffer size
 //
-void rgb_mgr_setChar(uint32_t charOffset,
-                    uint8_t charVal,
-                    uint8_t *pBuf,
-                    rgbData_t *pColor)
+void rgb_mgr_setChar(int charOffset,
+                     uint8_t charVal,
+                     uint8_t *pBuf,
+                     uint32_t bufSize,
+                     rgbData_t *pColor)
 {
     const char *font = &font5x7[(charVal - 0x20) * 5];
     uint32_t i,j;
 
     // set the bits based on the font value
-    for(i=0; i<5; i++){
+    for(i=0; i<6; i++){
         for(j=0; j<7; j++){
-            if(charOffset + i >= ROW_LENGTH){
-                clearPixel((charOffset + i) % ROW_LENGTH, j, pBuf);
+            if(charOffset + i < 0){
+                break;
+            }
+            if(i > 4){
+                clearPixel((charOffset + i), j, pBuf, bufSize);
             }
             else if(font[i] & 1<<j){
-                setPixel((charOffset + i), j, pBuf, pColor);
+                setPixel((charOffset + i), j, pBuf, bufSize, pColor);
             }
             else{
-                clearPixel((charOffset + i), j, pBuf);
+                clearPixel((charOffset + i), j, pBuf, bufSize);
             }
         }
-    }
-    for(j=0; j<7; j++){
-        clearPixel((charOffset + 5) % ROW_LENGTH, j, pBuf);
     }
 }
 
@@ -220,9 +226,8 @@ void rgb_mgr_set_new_str(uint8_t *newStr, uint32_t len)
 
 void rgb_mgr_main_function(void)
 {
-    static uint32_t scrollIdx = 0;
+    static int scrollIdx = ROW_LENGTH;
     static uint32_t scrollTime = 0;
-    static uint32_t charPos = 0;
     int i;
 //    static uint32_t xPos = 0;
 
@@ -239,21 +244,18 @@ void rgb_mgr_main_function(void)
         }
         else{
             scrollTime = systick_getMs();
-            rgb_mgr_setChar(scrollIdx, printChars[charPos], rawData, &rgbData);
-            if(charPos + 1 < printLength){
-                rgb_mgr_setChar(scrollIdx + 6, printChars[charPos + 1], rawData, &rgbData);
-            }
-            else{
-                rgb_mgr_setChar(scrollIdx + 6, ' ', rawData, &rgbData);
+
+            // print the string at the current offset
+            for(i=0; i<printLength; i++){
+                rgb_mgr_setChar(scrollIdx+i*6, printChars[i], rawData, rawDataLen, &rgbData);
             }
         }
 
         // scroll?
         if(scrollActive){
             scrollIdx--;
-            if(scrollIdx > 5){
-                charPos = (charPos + 1) % printLength;
-                scrollIdx = 5;
+            if(abs(scrollIdx) > printLength*6){
+                scrollIdx = ROW_LENGTH;
             }
         }
 
@@ -261,7 +263,6 @@ void rgb_mgr_main_function(void)
         if(incrementActive){
             rgb_mgr_increment_lights(brightness);
         }
-
     }
 }
 

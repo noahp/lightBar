@@ -180,7 +180,7 @@ int main(void)
 
     // rgb init
     memset(spiData, 0, sizeof(spiData));
-    rgb_mgr_init(&spiData[SPI_DEAD_PULSE_LENGTH]);
+    rgb_mgr_init(&spiData[SPI_DEAD_PULSE_LENGTH], sizeof(spiData) - SPI_DEAD_PULSE_LENGTH);
 
     // usb init
     usb_main_init();
