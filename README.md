@@ -21,3 +21,8 @@ Some ideas-
 - display weather, possibly using a gradient over the text background showing temperature/precip conditions
 
 I'm thinking some simple description language (maybe JSON format) to transmit the content from the ESP8266 to the LED controller. Something that can describe text content and position, bitmaps, maybe transparency. The LED controller would parse this data into its bitmapped frame buffer and print it on the display.
+
+For operation of the ESP8266, flow would be like this-  
+`wakeup->connect to saved access point credentials (lua file system)`  
+`    ->success, get time and date and weather information->sleep`  
+`    ->failure after few seconds, switch to access point mode and serve simple web page form with 2 fields, for ssid + key->if HTTP POSTs new credentials->back to start (try to connect)`
