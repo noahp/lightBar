@@ -13,7 +13,10 @@
 // call every ms
 void systick_update(void);
 
+// set new ms time
+void systick_setms(uint32_t ms);
+
 // return ms time
-uint32_t systick_getMs(void);
+uint32_t systick_getms(void);
 
 #endif // SYSTICK_H

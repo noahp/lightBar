@@ -138,9 +138,9 @@ uint8_t rgb_mgr_get_brightness(void)
     return brightness;
 }
 
-void rgb_mgr_toggle_increment(void)
+void rgb_mgr_set_increment(bool enable)
 {
-    incrementActive = !incrementActive;
+    incrementActive = enable;
     if(incrementActive){
         dataOff = brightness;
         rgbData.all = 0;
@@ -150,14 +150,14 @@ void rgb_mgr_toggle_increment(void)
     }
 }
 
-void rgb_mgr_toggle_scroll(void)
+void rgb_mgr_set_scroll(bool enable)
 {
-    scrollActive = !scrollActive;
+    scrollActive = enable;
 }
 
-void rgb_mgr_toggle_test(void)
+void rgb_mgr_set_test(bool enable)
 {
-    testActive = !testActive;
+    testActive = enable;
 }
 
 //
@@ -226,15 +226,15 @@ void rgb_mgr_set_new_str(uint8_t *newStr, uint32_t len)
 
 void rgb_mgr_main_function(void)
 {
-    static int scrollIdx = ROW_LENGTH;
+    static int scrollIdx = 0;//ROW_LENGTH;
     static uint32_t scrollTime = 0;
     int i;
 //    static uint32_t xPos = 0;
 
     // print chars
-    if(systick_getMs() - scrollTime > 100){
+    if(systick_getms() - scrollTime > 100){
         if(testActive){
-            scrollTime = systick_getMs() - 25;
+            scrollTime = systick_getms() - 25;
 //            clear_display();
 //            setPixel(xPos%(12*RGB_MGR_PANEL_COUNT), xPos/(12*RGB_MGR_PANEL_COUNT), rawData, &rgbData);
 //            xPos = (xPos + 1)%(RGB_MGR_PANEL_COUNT*RGB_MGR_LEDS_PER_PANEL);
@@ -243,12 +243,22 @@ void rgb_mgr_main_function(void)
             }
         }
         else{
-            scrollTime = systick_getMs();
+            scrollTime = systick_getms();
+
+            scrollIdx = 5;
 
             // print the string at the current offset
-            for(i=0; i<printLength; i++){
+            for(i=0; i<2; i++){
                 rgb_mgr_setChar(scrollIdx+i*6, printChars[i], rawData, rawDataLen, &rgbData);
             }
+            for(; i<printLength; i++){
+                rgb_mgr_setChar(scrollIdx+i*6+2, printChars[i], rawData, rawDataLen, &rgbData);
+            }
+
+            // separator
+            // 12x2 12x4
+            setPixel(scrollIdx + 12, 2, rawData, rawDataLen, &rgbData);
+            setPixel(scrollIdx + 12, 4, rawData, rawDataLen, &rgbData);
         }
 
         // scroll?
@@ -265,4 +275,3 @@ void rgb_mgr_main_function(void)
         }
     }
 }
-

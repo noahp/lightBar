@@ -1,6 +1,8 @@
 OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 SEARCH_DIR(.)
 
+HEAP_SIZE = 0x400;
+
 MEMORY
 {
   INTERRUPTS (rx)  : ORIGIN = 0x0,  LENGTH = 0xC0         /* 192 */
@@ -66,6 +68,17 @@ SECTIONS
     {
         . = ALIGN(8);
         *(.co_stack .co_stack.*)
+    } > RAM
+
+    /* heap section */
+    .heap :
+    {
+      . = ALIGN(8);
+      __end__ = .;
+      PROVIDE(end = .);
+      __HeapBase = .;
+      . += HEAP_SIZE;
+      __HeapLimit = .;
     } > RAM
 
     . = ALIGN(4);

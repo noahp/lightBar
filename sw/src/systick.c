@@ -14,8 +14,13 @@ void systick_update(void)
     systick_ms++;
 }
 
+void systick_setms(uint32_t ms)
+{
+    systick_ms = ms;
+}
+
 // return ms time
-uint32_t systick_getMs(void)
+uint32_t systick_getms(void)
 {
     return systick_ms;
 }
