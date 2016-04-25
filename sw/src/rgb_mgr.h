@@ -10,7 +10,7 @@
 #define RGB_MGR_H
 
 #define RGB_MGR_LEDS_PER_PANEL 84
-#define RGB_MGR_PANEL_COUNT 2
+#define RGB_MGR_PANEL_COUNT 3
 
 // color type
 typedef union rgbData_u {

@@ -1,4 +1,2 @@
-rbg_blink
-=========
-
-Blink an rgb led
+# RGB Banner
+Clock and weather.
